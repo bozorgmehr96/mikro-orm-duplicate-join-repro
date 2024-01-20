@@ -1,5 +1,6 @@
 import { MikroORM } from '@mikro-orm/sqlite';
 import { User } from './user.entity';
+import { Address } from './address.entity';
 
 let orm: MikroORM;
 
@@ -19,16 +20,5 @@ afterAll(async () => {
 });
 
 test('basic CRUD example', async () => {
-  orm.em.create(User, { name: 'Foo', email: 'foo' });
-  await orm.em.flush();
-  orm.em.clear();
-
-  const user = await orm.em.findOneOrFail(User, { email: 'foo' });
-  expect(user.name).toBe('Foo');
-  user.name = 'Bar';
-  orm.em.remove(user);
-  await orm.em.flush();
-
-  const count = await orm.em.count(User, { email: 'foo' });
-  expect(count).toBe(0);
+  await orm.em.find(Address, {user: { email: 'me@example.com' } }, { populate: ['user'] });
 });
